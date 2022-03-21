@@ -4,6 +4,7 @@ import './App.css';
 import { Grid } from './grid/grid';
 import { Dijkstra } from './dijkstra/dijkstra';
 import rgbHex from 'rgb-hex';
+import { Size } from "./grid/multilayerGrid";
 
 class App extends React.Component<AppProps> {
   private grid: Grid;
@@ -11,7 +12,7 @@ class App extends React.Component<AppProps> {
 
   constructor(props: AppProps) {
     super(props);
-    this.grid = new Grid(50, 50)
+    this.grid = new Grid({ x:50, y: 50 });
 
     var originCells = [
         this.grid.getValue(20, 25),
@@ -43,7 +44,7 @@ class App extends React.Component<AppProps> {
       var cell = this.grid.getValue(30, 35);
       while(this.map.getValue(cell.x, cell.y) > 0) {
         ctx.fillRect(cell.x * 20, cell.y * 20, 20, 20);
-        cell = this.map.whereToGo(cell);
+        cell = this.map.whereToGo(cell, 0);
       }
     }
 

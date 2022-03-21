@@ -7,7 +7,7 @@ export class Dijkstra extends Matrix<number> {
     private grid: Grid;
 
     constructor(grid: Grid, originCells: Cell[]) {
-        super(grid.sizeX, grid.sizeY, (x, y) => {
+        super(grid.size, (x, y) => {
             if(originCells.some((cell) => cell.x === x && cell.y === y)) {
                 return 0;
             }
@@ -30,7 +30,7 @@ export class Dijkstra extends Matrix<number> {
         })
         calculatedCellCount += originCells.length;
 
-        var totalCellCount = this.sizeX * this.sizeY;
+        var totalCellCount = this.size.x * this.size.y;
 
         while(calculatedCellCount < totalCellCount) {
             var edgeCells = this.getEdgeCells(candidateEdgeCells);
@@ -80,22 +80,29 @@ export class Dijkstra extends Matrix<number> {
         return this.getValue(cell.x, cell.y);
     }
 
-    public whereToGo(startCell: Cell): Cell {
+    // randomness being added here temporarily to spice up pathfinding.  For value R, each candidate neighbor's value is modified by a random value between -R and R before comparing it to the best cell.
+
+    public whereToGo(startCell: Cell, randomness: number = 0): Cell {
         var neighbors = startCell.GetNeighbors();
 
-        var options = neighbors.reduce<Cell[]>((bestCells: Cell[], neighbor: Cell) => {
-            var bestValue = this.getValue(bestCells[0].x, bestCells[0].y);
-            var neighborValue = this.getValue(neighbor.x, neighbor.y);
+        var bestValue = this.getValue(startCell.x, startCell.y) + this.GetRandom(randomness);
+
+        var options = neighbors.reduce<{ cells: Cell[], bestValue: number }>(({ cells, bestValue }, neighbor: Cell) => {
+            var neighborValue = this.getValue(neighbor.x, neighbor.y) + this.GetRandom(randomness);
 
             if(neighborValue < bestValue) {
-                return [neighbor];
+                return { cells: [neighbor], bestValue: neighborValue };
             } else if(neighborValue === bestValue) {
-                return [...bestCells, neighbor];
+                return { cells: [...cells, neighbor], bestValue };
             } else {
-                return bestCells;
+                return { cells: cells, bestValue };
             }
-        }, [startCell]);
+        }, { cells: [startCell], bestValue });
 
-        return random(options);
+        return random(options.cells);
+    }
+
+    private GetRandom(randomness: number) {
+        return (Math.random() * 2 * randomness) - randomness;
     }
 }

@@ -38,4 +38,8 @@ export class Cell {
     public GetNeighbors(): Cell[] {
         return this.neighbors;
     }
+
+    public MoveContents(newCell: Cell) {
+        this.grid.MoveContents(this, newCell);
+    }
 }

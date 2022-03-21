@@ -28,15 +28,23 @@ export class MultilayerGrid {
             this.terrainLayer,
         ];
     }
+
+    public canPass(layer: Layer): boolean {
+        return this.layers.every((gridLayer) => {
+            gridLayer
+        });
+    }
 }
 
 export class GridLayer {
     private options: GridLayerOptions;
     private size: Size;
+    public grid: Grid;
 
     protected constructor(options: GridLayerOptions, size: Size) {
         this.options = options;
         this.size = size;
+        this.grid = new Grid(size);
     }
 }
 

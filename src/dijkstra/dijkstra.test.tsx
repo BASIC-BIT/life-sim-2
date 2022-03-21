@@ -4,7 +4,7 @@ import { Grid } from '../grid/grid';
 import { Dijkstra } from './dijkstra';
 
 test('constructs dijkstra map', () => {
-    var grid = new Grid(5, 5);
+    var grid = new Grid({ x: 5, y: 5 });
     var originCells = [grid.getValue(2, 2), grid.getValue(4, 1)];
     var map = new Dijkstra(grid, originCells);
 
@@ -17,5 +17,4 @@ test('constructs dijkstra map', () => {
         [2, 1, 1, 2, 3],
         [1, 0, 1, 2, 3],
     ]);
-
 });

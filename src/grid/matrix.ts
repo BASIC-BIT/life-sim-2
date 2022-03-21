@@ -1,12 +1,12 @@
+import { Size } from "./multilayerGrid";
+
 export class Matrix<T> {
     protected values: T[][] = [];
 
-    public sizeX: number;
-    public sizeY: number;
+    public size: Size;
 
-    constructor(x: number, y:number, initializer?: (x: number, y: number) => T) {
-        this.sizeX = x;
-        this.sizeY = y;
+    constructor(size: Size, initializer?: (x: number, y: number) => T) {
+        this.size = size;
 
         if(initializer !== undefined) {
             this.initializeMatrix(initializer);
@@ -14,9 +14,9 @@ export class Matrix<T> {
     }
 
     public initializeMatrix(initializer: (x: number, y: number) => T) : void {
-        for(var i = 0; i<this.sizeX; i++){
+        for(var i = 0; i<this.size.x; i++){
             var row = [];
-            for(var j=0; j<this.sizeY; j++) {
+            for(var j=0; j<this.size.y; j++) {
                 row[j] = initializer(i, j);
             }
             this.values[i] = row;
@@ -44,8 +44,8 @@ export class Matrix<T> {
     }
 
     public getValue(x: number, y: number) : T {
-        if(x < 0 || y < 0 || x >= this.sizeX || y >= this.sizeY) {
-            throw new Error(`Matrix value of ${x},${y} is outside of bounds ${this.sizeX},${this.sizeY}`)
+        if(x < 0 || y < 0 || x >= this.size.x || y >= this.size.y) {
+            throw new Error(`Matrix value of ${x},${y} is outside of bounds ${this.size.x},${this.size.y}`)
         }
 
         return this.values[x][y];
