@@ -3,53 +3,55 @@ import { Grid } from "../grid/grid";
 import { Matrix } from "../grid/matrix";
 import { random } from "../util/array";
 
-export class Dijkstra extends Matrix<number> {
+export class SingleDijkstra extends Matrix<number> {
     protected grid: Grid;
 
     public static IMPASSABLE: number = -1;
 
-    constructor(grid: Grid, originCells?: Cell[]) {
-        super(grid.size, (x, y) => {
-            if(originCells?.some((cell) => cell.x === x && cell.y === y)) {
-                return 0;
-            }
+    private candidateEdgeCells: Cell[] = [];
+    private lastCalculatedCount: number = -1;
 
-            return NaN;
-        });
+    constructor(grid: Grid) {
+        super(grid.size, (x, y) => NaN);
         this.grid = grid;
-
-        if(originCells) {
-            this.Map(originCells);
-        }
     }
 
-    public Map(originCells: Cell[]): void {
-        var candidateEdgeCells: Cell[] = [];
-
+    public StartMap(originCells: Cell[]): void {
         originCells.forEach((cell) => {
             this.setValue(cell.x, cell.y, 0);
-            candidateEdgeCells.push(cell);
+            this.candidateEdgeCells.push(cell);
         })
+        this.candidateEdgeCells = this.getEdgeCells(this.candidateEdgeCells);
 
-        var lastCalculatedCount = originCells.length;
+        this.lastCalculatedCount = originCells.length;
+    }
 
-        while(lastCalculatedCount > 0) {
-            lastCalculatedCount = 0;
-            var edgeCells = this.getEdgeCells(candidateEdgeCells);
-            candidateEdgeCells = [...edgeCells];
-
-            edgeCells.forEach((cell) => {
-                var uncalculatedNeighbors = this.getUncalculatedNeighbors(cell);
-                var curValue = this.getValue(cell.x, cell.y);
-                var neighborValue = curValue + 1; //Increment map value by one for every square away;
-
-                uncalculatedNeighbors.forEach((neighbor) => {
-                    this.setValue(neighbor.x, neighbor.y, neighborValue);
-                    candidateEdgeCells.push(neighbor);
-                    lastCalculatedCount++;
-                });
-            });
+    public MapTick(): boolean {
+        if(this.lastCalculatedCount === 0) {
+            return false;
         }
+
+        this.lastCalculatedCount = 0;
+
+        this.candidateEdgeCells.forEach((cell) => {
+            var uncalculatedNeighbors = this.getUncalculatedNeighbors(cell);
+            var curValue = this.getValue(cell.x, cell.y);
+            var neighborValue = curValue + 1; //Increment map value by one for every square away;
+
+            uncalculatedNeighbors.forEach((neighbor) => {
+                this.setValue(neighbor.x, neighbor.y, neighborValue);
+                this.candidateEdgeCells.push(neighbor);
+                this.lastCalculatedCount++;
+            });
+        });
+
+        this.candidateEdgeCells = this.getEdgeCells(this.candidateEdgeCells);
+
+        return true;
+    }
+
+    public getCandidateEdgeCells(): Cell[] {
+        return this.candidateEdgeCells;
     }
 
     public getValues(): number[][] {

@@ -29,6 +29,12 @@ export class Matrix<T> {
                 func(value)));
     }
 
+    public filter(func: (value: T) => boolean): T[][] {
+        return this.values.map((row) =>
+            row.filter((value) =>
+                func(value)));
+    }
+
     public forEach(func: (value: T) => void): void {
         this.values.map((row) =>
             row.map((value) =>

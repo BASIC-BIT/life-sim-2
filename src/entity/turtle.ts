@@ -1,7 +1,9 @@
-import { Layer } from "../enum/grid";
-import { Cell } from "../grid/cell";
-import { Color } from "../models/color";
-import { Animal } from "./animal";
+import { FoodTypes } from "../enum/foodTypes";
+import {Layer} from "../enum/grid";
+import {Cell} from "../grid/cell";
+import {Color} from "../models/color";
+import {Animal} from "./animal";
+import {Edible, Traits, TraitType} from "./animal/traits";
 
 export class Turtle extends Animal {
     protected restRecoveryRate: number = 5;
